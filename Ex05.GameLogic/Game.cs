@@ -19,17 +19,23 @@ namespace Ex05.GameLogic
             O = 'O'
         }
 
+        public delegate void BoardChangedHandler(int i_Row, int i_Col, char i_PlayerSign);
+        public event BoardChangedHandler OnBoardChanged;
+
         private const int k_InvalidBoardLocation = -1;
         private readonly eGameType r_GameType;
-        private bool m_IsFirstPlayerMove;
-        private bool m_IsPlayerLosed;
-        private bool m_IsTie;
+        private bool m_IsFirstPlayerMove = true;
+        private bool m_IsPlayerLosed = false;
+        private bool m_IsTie = false;
         private Player m_FirstPlayer;
         private Player m_SecondPlayer;
         private Board m_Board;
         public Game(eGameType i_GameType, int i_BoardSize)
         {
             r_GameType = i_GameType;
+            m_Board = new Board(i_BoardSize);
+            m_FirstPlayer = new Player((char)ePlayersSigns.X, 0);
+            m_SecondPlayer = new Player((char)ePlayersSigns.O, 0);
         }
 
         public eGameType GameType
@@ -50,6 +56,8 @@ namespace Ex05.GameLogic
             {
                 m_SecondPlayer.HumanMove(ref m_Board, i_Row, i_Col);
             }
+
+            OnBoardChanged?.Invoke(i_Row, i_Col, getCurrentPlayerSign());
             checkGameStatus(i_Row, i_Col);
             m_IsFirstPlayerMove = !m_IsFirstPlayerMove;
         }
@@ -59,6 +67,7 @@ namespace Ex05.GameLogic
             int row = k_InvalidBoardLocation, column = k_InvalidBoardLocation;
 
             m_SecondPlayer.SmarterComputerMove(ref m_Board, ref row, ref column);
+            OnBoardChanged?.Invoke(row, column, getCurrentPlayerSign());
             checkGameStatus(row, column);
             m_IsFirstPlayerMove = !m_IsFirstPlayerMove;
         }

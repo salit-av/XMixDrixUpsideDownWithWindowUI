@@ -23,7 +23,7 @@ namespace Ex05.GameUI
 
         public XMixDrixUpsideDownForm(int i_BoardSize, string i_NameOfPlayer1, string i_NameOfPlayer2, bool i_IsPlayer2Computer)
         {
-            setGameLogic(i_BoardSize, i_IsPlayer2Computer);
+            createGameLogic(i_BoardSize, i_IsPlayer2Computer);
             InitializeComponnent(i_BoardSize, i_NameOfPlayer1, i_NameOfPlayer2);
             this.Text = "TicTacToeMisere";
             this.AutoSize = true;
@@ -38,7 +38,7 @@ namespace Ex05.GameUI
             InitializeLabels(i_BoardSize, i_NameOfPlayer1, i_NameOfPlayer2);
         }
 
-        private void setGameLogic(int i_BoardSize, bool i_IsPlayer2Computer)
+        private void createGameLogic(int i_BoardSize, bool i_IsPlayer2Computer)
         {
             if (i_IsPlayer2Computer)
             {

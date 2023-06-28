@@ -41,8 +41,11 @@ namespace Ex05.GameUI
 
         private void buttonStart_Clicked(object sender, EventArgs e)
         {
+            string player1Name = textBoxPlayer1.Text == "" ? textBoxPlayer1.Text : "Player1";
+            string player2Name = textBoxPlayer2.Text == "[Computer]" && !checkBoxPlayer2.Checked ? "Computer" : textBoxPlayer2.Text;
+
             this.Hide();
-            XMixDrixUpsideDownForm xMixDrixUpsideDownForm = new XMixDrixUpsideDownForm(int.Parse(numericUpDownRows.Text), textBoxPlayer1.Text, textBoxPlayer2.Text, !checkBoxPlayer2.Checked);
+            XMixDrixUpsideDownForm xMixDrixUpsideDownForm = new XMixDrixUpsideDownForm(int.Parse(numericUpDownRows.Text), player1Name, player2Name, !checkBoxPlayer2.Checked);
             xMixDrixUpsideDownForm.ShowDialog();
             this.Close();
         }
