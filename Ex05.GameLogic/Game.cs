@@ -96,10 +96,7 @@ namespace Ex05.GameLogic
         }
         public bool isWinOrTie()
         {
-            throw new NotImplementedException();
+            return m_IsPlayerLosed && m_IsTie;
         }
     }
 }
-
-
-
