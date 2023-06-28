@@ -22,6 +22,15 @@ namespace Ex05.GameLogic
         public delegate void BoardChangedHandler(int i_Row, int i_Col, char i_PlayerSign);
         public event BoardChangedHandler OnBoardChanged;
 
+        public delegate void GameTieHandler(int i_FirstPlayerScore, int i_SecondPlayerScore);
+        public event GameTieHandler OnGameTie; 
+        
+        public delegate void GameLosedHandler(string i_PlayerName, int i_FirstPlayerScore, int i_SecondPlayerScore);
+        public event GameLosedHandler OnGameLosed;
+
+        public delegate void GameTurnHandler(bool i_IsFirstPlayerTurn);
+        public event GameTurnHandler OnChangeTurn;
+
         private const int k_InvalidBoardLocation = -1;
         private readonly eGameType r_GameType;
         private bool m_IsFirstPlayerMove = true;
@@ -30,12 +39,12 @@ namespace Ex05.GameLogic
         private Player m_FirstPlayer;
         private Player m_SecondPlayer;
         private Board m_Board;
-        public Game(eGameType i_GameType, int i_BoardSize)
+        public Game(eGameType i_GameType, int i_BoardSize, string i_NameOfPlayer1, string i_NameOfPlayer2)
         {
             r_GameType = i_GameType;
             m_Board = new Board(i_BoardSize);
-            m_FirstPlayer = new Player((char)ePlayersSigns.X, 0);
-            m_SecondPlayer = new Player((char)ePlayersSigns.O, 0);
+            m_FirstPlayer = new Player((char)ePlayersSigns.X, 0, i_NameOfPlayer1);
+            m_SecondPlayer = new Player((char)ePlayersSigns.O, 0, i_NameOfPlayer2);
         }
 
         public eGameType GameType
@@ -60,6 +69,7 @@ namespace Ex05.GameLogic
             OnBoardChanged?.Invoke(i_Row, i_Col, getCurrentPlayerSign());
             checkGameStatus(i_Row, i_Col);
             m_IsFirstPlayerMove = !m_IsFirstPlayerMove;
+            OnChangeTurn?.Invoke(m_IsFirstPlayerMove);
         }
 
         public void ComputerMove()
@@ -70,6 +80,7 @@ namespace Ex05.GameLogic
             OnBoardChanged?.Invoke(row, column, getCurrentPlayerSign());
             checkGameStatus(row, column);
             m_IsFirstPlayerMove = !m_IsFirstPlayerMove;
+            OnChangeTurn?.Invoke(m_IsFirstPlayerMove);
         }
 
         private void checkGameStatus(int row, int col)
@@ -85,6 +96,7 @@ namespace Ex05.GameLogic
                 m_FirstPlayer.Score++;
                 m_SecondPlayer.Score++;
                 m_IsTie = true;
+                OnGameTie?.Invoke(m_FirstPlayer.Score, m_SecondPlayer.Score);
             }
         }
         private void checkIfLose(int i_Row, int i_Column)
@@ -93,7 +105,24 @@ namespace Ex05.GameLogic
             {
                 addPlayerScore();
                 m_IsPlayerLosed = true;
+                OnGameLosed?.Invoke(getCurrentPlayerName(), m_FirstPlayer.Score, m_SecondPlayer.Score);
             }
+        }
+
+        private string getCurrentPlayerName()
+        {
+            string resName;
+
+            if (!m_IsFirstPlayerMove)
+            {
+                resName = m_FirstPlayer.Name;
+            }
+            else
+            {
+                resName = m_SecondPlayer.Name;
+            }
+
+            return resName;
         }
 
         private char getCurrentPlayerSign()
@@ -111,6 +140,7 @@ namespace Ex05.GameLogic
 
             return resSign;
         }
+        
         private void addPlayerScore()
         {
             if (m_IsFirstPlayerMove)
@@ -125,6 +155,14 @@ namespace Ex05.GameLogic
         public bool isWinOrTie()
         {
             return m_IsPlayerLosed && m_IsTie;
+        }
+
+        public void StartNewGame()
+        {
+            m_Board.ClearBoard();
+            m_IsFirstPlayerMove = true;
+            m_IsPlayerLosed = false;
+            m_IsTie = false;
         }
     }
 }

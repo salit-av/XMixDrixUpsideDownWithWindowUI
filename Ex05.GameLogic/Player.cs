@@ -9,11 +9,13 @@ namespace Ex05.GameLogic
     {
         private char m_Sign;
         private int m_Score;
+        private string m_NameOfPlayer;
 
-        internal Player(char i_Sign, int i_Score)
+        internal Player(char i_Sign, int i_Score, string i_NameOfPlayer)
         {
             m_Sign = i_Sign;
             m_Score = i_Score;
+            m_NameOfPlayer = i_NameOfPlayer;
         }
 
         internal char Sign
@@ -42,6 +44,13 @@ namespace Ex05.GameLogic
             }
         }
 
+        internal string Name
+        {
+            get
+            {
+                return m_NameOfPlayer;
+            }
+        }
         internal void SmarterComputerMove(ref Board io_Board, ref int io_Row, ref int io_Column)
         {
             int i = 0;

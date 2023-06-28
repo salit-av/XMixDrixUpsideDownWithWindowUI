@@ -23,7 +23,7 @@ namespace Ex05.GameUI
 
         public XMixDrixUpsideDownForm(int i_BoardSize, string i_NameOfPlayer1, string i_NameOfPlayer2, bool i_IsPlayer2Computer)
         {
-            createGameLogic(i_BoardSize, i_IsPlayer2Computer);
+            createGameLogic(i_BoardSize, i_IsPlayer2Computer, i_NameOfPlayer1, i_NameOfPlayer2);
             InitializeComponnent(i_BoardSize, i_NameOfPlayer1, i_NameOfPlayer2);
             this.Text = "TicTacToeMisere";
             this.AutoSize = true;
@@ -38,23 +38,92 @@ namespace Ex05.GameUI
             InitializeLabels(i_BoardSize, i_NameOfPlayer1, i_NameOfPlayer2);
         }
 
-        private void createGameLogic(int i_BoardSize, bool i_IsPlayer2Computer)
+        private void createGameLogic(int i_BoardSize, bool i_IsPlayer2Computer, string i_NameOfPlayer1, string i_NameOfPlayer2)
         {
             if (i_IsPlayer2Computer)
             {
-                m_Game = new Game(Game.eGameType.AgainstTheCumputer, i_BoardSize);
+                m_Game = new Game(Game.eGameType.AgainstTheCumputer, i_BoardSize, i_NameOfPlayer1, i_NameOfPlayer2);
             }
             else
             {
-                m_Game = new Game(Game.eGameType.TwoHumanPlayers, i_BoardSize);
+                m_Game = new Game(Game.eGameType.TwoHumanPlayers, i_BoardSize, i_NameOfPlayer1, i_NameOfPlayer2);
             }
 
-            m_Game.OnBoardChanged += M_Game_OnBoardChanged;
+            m_Game.OnBoardChanged += m_Game_OnBoardChanged;
+            m_Game.OnGameTie += m_Game_OnGameTie;
+            m_Game.OnGameLosed += m_Game_OnGameLosed;
+            m_Game.OnChangeTurn += m_Game_OnChangeTurn;
         }
 
-        private void M_Game_OnBoardChanged(int i_Row, int i_Col, char i_PlayerSign)
+        private void m_Game_OnChangeTurn(bool i_IsFirstPlayerTurn)
+        {
+            if (i_IsFirstPlayerTurn)
+            {
+                m_LabelPlayer1Name.Font = new Font(m_LabelPlayer1Name.Font, FontStyle.Bold);
+                m_LabelPlayer1Score.Font = new Font(m_LabelPlayer1Score.Font, FontStyle.Bold);
+                m_LabelPlayer2Name.Font = new Font(m_LabelPlayer2Name.Font, FontStyle.Regular);
+                m_LabelPlayer2Score.Font = new Font(m_LabelPlayer2Score.Font, FontStyle.Regular);
+            }
+            else
+            {
+                m_LabelPlayer1Name.Font = new Font(m_LabelPlayer1Name.Font, FontStyle.Regular);
+                m_LabelPlayer1Score.Font = new Font(m_LabelPlayer1Score.Font, FontStyle.Regular);
+                m_LabelPlayer2Name.Font = new Font(m_LabelPlayer2Name.Font, FontStyle.Bold);
+                m_LabelPlayer2Score.Font = new Font(m_LabelPlayer2Score.Font, FontStyle.Bold);
+            }
+        }
+
+        private void m_Game_OnBoardChanged(int i_Row, int i_Col, char i_PlayerSign)
         {
             m_GameBoardButtons[i_Row, i_Col].Text = i_PlayerSign.ToString();
+            m_GameBoardButtons[i_Row, i_Col].Enabled = false;
+        }
+
+        private void m_Game_OnGameTie(int i_FirstPlayerScore, int i_SecondPlayerScore)
+        {
+            updateLabelScore(i_FirstPlayerScore, i_SecondPlayerScore);
+            TieOrLosedForm tieOrLosedForm = new TieOrLosedForm("A Tie!", "Tie!");
+            
+            if (tieOrLosedForm.ShowDialog() == DialogResult.Yes)
+            {
+               startNewGame();
+            }
+            else
+            {
+                this.Close();
+            }
+        }
+
+        private void m_Game_OnGameLosed(string i_PlayerName, int i_FirstPlayerScore, int i_SecondPlayerScore)
+        {
+            updateLabelScore(i_FirstPlayerScore, i_SecondPlayerScore);
+            TieOrLosedForm tieOrLosedForm = new TieOrLosedForm("A Win!", string.Format("{0}{1}{2}", "The winner is ", i_PlayerName, "!"));
+
+            if (tieOrLosedForm.ShowDialog() == DialogResult.Yes)
+            {
+                startNewGame();
+            }
+            else
+            {
+                this.Close();
+            }
+        }
+
+        private void updateLabelScore(int i_FirstPlayerScore, int i_SecondPlayerScore)
+        {
+            m_LabelPlayer1Score.Text = i_FirstPlayerScore.ToString();
+            m_LabelPlayer2Score.Text = i_SecondPlayerScore.ToString();
+        }
+
+        private void startNewGame()
+        {
+            m_Game.StartNewGame();
+
+            foreach(GameButton gameButton in m_GameBoardButtons)
+            {
+                gameButton.Text = "";
+                gameButton.Enabled = true;
+            }
         }
 
         private void initializeGameBoardButtons(int i_BoardSize)
@@ -82,30 +151,23 @@ namespace Ex05.GameUI
 
             m_Game.HumanMove(row, col);
 
-            if(!m_Game.isWinOrTie() && m_Game.GameType.Equals(Game.eGameType.AgainstTheCumputer))
+            if(m_Game.GameType.Equals(Game.eGameType.AgainstTheCumputer))
             {
                 m_Game.ComputerMove();
             }
-
-            if (m_Game.isWinOrTie())
-            {
-                handleWinOrTie();
-            }
         }
 
-        private void handleWinOrTie()
-        {
-
-        }
         private void InitializeLabels(int i_BoardSize, string i_NameOfPlayer1, string i_NameOfPlayer2)
         {
             int labelHight = i_BoardSize * k_ButtonHight + i_BoardSize * k_SpaceBetweenButtons;
-            int width = (int)((this.Width / 2) - (k_ButtonWidth));
+            int width = (int)((this.Width / 2) - (2 * k_ButtonWidth));
 
             m_LabelPlayer1Name = new Label { Text = i_NameOfPlayer1, Location = new Point(width, labelHight), AutoSize = true };
-            m_LabelPlayer1Score = new Label { Text = k_StartingScore, Location = new Point(m_LabelPlayer1Name.Location.X + m_LabelPlayer1Name.Width + 2, labelHight), AutoSize = true };
+            m_LabelPlayer1Score = new Label { Text = k_StartingScore, Location = new Point(m_LabelPlayer1Name.Width +5, labelHight), AutoSize = true, BackColor = Color.Red};
+            m_LabelPlayer1Name.Font = new Font(m_LabelPlayer1Name.Font, FontStyle.Bold);
+            m_LabelPlayer1Score.Font = new Font(m_LabelPlayer1Score.Font, FontStyle.Bold);
             m_LabelPlayer2Name = new Label { Text = i_NameOfPlayer2, Location = new Point((int)(this.Width / 2), labelHight), AutoSize = true };
-            m_LabelPlayer2Score = new Label { Text = k_StartingScore, Location = new Point(m_LabelPlayer2Name.Location.X + m_LabelPlayer2Name.Width + 5, labelHight), AutoSize = true };
+            m_LabelPlayer2Score = new Label { Text = k_StartingScore, Location = new Point(m_LabelPlayer2Name.Width + m_LabelPlayer2Name.Text.Length *10, labelHight), AutoSize = true, BackColor = Color.Green};
 
             this.Controls.AddRange(new Control[] { m_LabelPlayer1Name, m_LabelPlayer1Score, m_LabelPlayer2Name, m_LabelPlayer2Score });
         }
