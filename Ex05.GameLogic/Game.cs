@@ -19,6 +19,7 @@ namespace Ex05.GameLogic
             O = 'O'
         }
 
+        private const int k_InvalidBoardLocation = -1;
         private readonly eGameType r_GameType;
         private bool m_IsFirstPlayerMove;
         private bool m_IsPlayerLosed;
@@ -38,25 +39,27 @@ namespace Ex05.GameLogic
                 return r_GameType;
             }
         }
-        public void Move(int row, int col)
+
+        public void HumanMove(int i_Row, int i_Col)
         {
             if (m_IsFirstPlayerMove)
             {
-                m_FirstPlayer.HumanMove(ref m_Board, ref row, ref col);
+                m_FirstPlayer.HumanMove(ref m_Board, i_Row, i_Col);
             }
-            else
+            else if (r_GameType == eGameType.TwoHumanPlayers)
             {
-                if (r_GameType.Equals(eGameType.AgainstTheCumputer))
-                {
-                    m_SecondPlayer.SmarterComputerMove(ref m_Board, ref row, ref col);
-                }
-                else 
-                {
-                    m_SecondPlayer.HumanMove(ref m_Board, ref row, ref col);
-                }
+                m_SecondPlayer.HumanMove(ref m_Board, i_Row, i_Col);
             }
+            checkGameStatus(i_Row, i_Col);
+            m_IsFirstPlayerMove = !m_IsFirstPlayerMove;
+        }
 
-            checkGameStatus(row, col);
+        public void ComputerMove()
+        {
+            int row = k_InvalidBoardLocation, column = k_InvalidBoardLocation;
+
+            m_SecondPlayer.SmarterComputerMove(ref m_Board, ref row, ref column);
+            checkGameStatus(row, column);
             m_IsFirstPlayerMove = !m_IsFirstPlayerMove;
         }
 
@@ -82,6 +85,22 @@ namespace Ex05.GameLogic
                 addPlayerScore();
                 m_IsPlayerLosed = true;
             }
+        }
+
+        private char getCurrentPlayerSign()
+        {
+            char resSign;
+
+            if (m_IsFirstPlayerMove)
+            {
+                resSign = m_FirstPlayer.Sign;
+            }
+            else
+            {
+                resSign = m_SecondPlayer.Sign;
+            }
+
+            return resSign;
         }
         private void addPlayerScore()
         {

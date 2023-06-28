@@ -73,12 +73,11 @@ namespace Ex05.GameUI
             int row = (sender as GameButton).Row;
             int col = (sender as GameButton).Col;
 
-            m_Game.Move(row, col);
+            m_Game.HumanMove(row, col);
 
-
-            if(!m_Game.isWinOrTie() && m_Game.GetGameType() == Game.eGameType.AgainstTheCumputer)
+            if(!m_Game.isWinOrTie() && m_Game.GameType.Equals(Game.eGameType.AgainstTheCumputer))
             {
-                m_Game.Move(row, col);
+                m_Game.ComputerMove();
             }
 
             if (m_Game.isWinOrTie())
