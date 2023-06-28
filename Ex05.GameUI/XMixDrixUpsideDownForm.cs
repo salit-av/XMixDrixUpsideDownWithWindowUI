@@ -48,6 +48,13 @@ namespace Ex05.GameUI
             {
                 m_Game = new Game(Game.eGameType.TwoHumanPlayers, i_BoardSize);
             }
+
+            m_Game.OnBoardChanged += M_Game_OnBoardChanged;
+        }
+
+        private void M_Game_OnBoardChanged(int i_Row, int i_Col, char i_PlayerSign)
+        {
+            m_GameBoardButtons[i_Row, i_Col].Text = i_PlayerSign.ToString();
         }
 
         private void initializeGameBoardButtons(int i_BoardSize)
@@ -88,7 +95,7 @@ namespace Ex05.GameUI
 
         private void handleWinOrTie()
         {
-            //throw new NotImplementedException();
+
         }
         private void InitializeLabels(int i_BoardSize, string i_NameOfPlayer1, string i_NameOfPlayer2)
         {

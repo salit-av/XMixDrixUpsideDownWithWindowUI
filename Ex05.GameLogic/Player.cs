@@ -66,12 +66,6 @@ namespace Ex05.GameLogic
                 GetRowAndCol(random, i_Board.BoardSize, out o_Row, out o_Column);
             }
         }
-
-        private void GetRowAndCol(Random random, object boardSize, out int o_Row, out int o_Column)
-        {
-            throw new NotImplementedException();
-        }
-
         private void GetRowAndCol(Random i_Random, int i_BoardSize, out int o_Row, out int o_Column)
         {
             o_Row = i_Random.Next(0, i_BoardSize);
