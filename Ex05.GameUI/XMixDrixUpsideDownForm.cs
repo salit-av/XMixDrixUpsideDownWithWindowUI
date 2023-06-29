@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Ex05.GameLogic;
@@ -9,17 +7,15 @@ namespace Ex05.GameUI
 {
     public partial class XMixDrixUpsideDownForm : Form
     {
-        private const int k_ButtonHight = 40;
+        private const int k_ButtonHeight = 40;
         private const int k_ButtonWidth = 50;
         private const int k_SpaceBetweenButtons = 5;
         private const string k_StartingScore = "0";
 
         private Game m_Game;
         private GameButton[,] m_GameBoardButtons;
-        private Label m_LabelPlayer1Name;
-        private Label m_LabelPlayer1Score;
-        private Label m_LabelPlayer2Name;
-        private Label m_LabelPlayer2Score;
+        private Label m_LabelPlayer1;
+        private Label m_LabelPlayer2;
 
         public XMixDrixUpsideDownForm(int i_BoardSize, string i_NameOfPlayer1, string i_NameOfPlayer2, bool i_IsPlayer2Computer)
         {
@@ -29,7 +25,9 @@ namespace Ex05.GameUI
             this.AutoSize = true;
             this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.Padding = new Padding(10, 10, 10, 15);
+            this.Padding = new Padding(10, 10, 5, 15);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
         }
 
         private void InitializeComponnent(int i_BoardSize, string i_NameOfPlayer1, string i_NameOfPlayer2)
@@ -59,17 +57,13 @@ namespace Ex05.GameUI
         {
             if (i_IsFirstPlayerTurn)
             {
-                m_LabelPlayer1Name.Font = new Font(m_LabelPlayer1Name.Font, FontStyle.Bold);
-                m_LabelPlayer1Score.Font = new Font(m_LabelPlayer1Score.Font, FontStyle.Bold);
-                m_LabelPlayer2Name.Font = new Font(m_LabelPlayer2Name.Font, FontStyle.Regular);
-                m_LabelPlayer2Score.Font = new Font(m_LabelPlayer2Score.Font, FontStyle.Regular);
+                m_LabelPlayer1.Font = new Font(m_LabelPlayer1.Font, FontStyle.Bold);
+                m_LabelPlayer2.Font = new Font(m_LabelPlayer2.Font, FontStyle.Regular);
             }
             else
             {
-                m_LabelPlayer1Name.Font = new Font(m_LabelPlayer1Name.Font, FontStyle.Regular);
-                m_LabelPlayer1Score.Font = new Font(m_LabelPlayer1Score.Font, FontStyle.Regular);
-                m_LabelPlayer2Name.Font = new Font(m_LabelPlayer2Name.Font, FontStyle.Bold);
-                m_LabelPlayer2Score.Font = new Font(m_LabelPlayer2Score.Font, FontStyle.Bold);
+                m_LabelPlayer1.Font = new Font(m_LabelPlayer1.Font, FontStyle.Regular);
+                m_LabelPlayer2.Font = new Font(m_LabelPlayer2.Font, FontStyle.Bold);
             }
         }
 
@@ -111,8 +105,8 @@ namespace Ex05.GameUI
 
         private void updateLabelScore(int i_FirstPlayerScore, int i_SecondPlayerScore)
         {
-            m_LabelPlayer1Score.Text = i_FirstPlayerScore.ToString();
-            m_LabelPlayer2Score.Text = i_SecondPlayerScore.ToString();
+            m_LabelPlayer1.Text = m_Game.GetFirstPlayerName() + ": " + i_FirstPlayerScore.ToString();
+            m_LabelPlayer2.Text = m_Game.GetSecondPlayerName() + ": " + i_SecondPlayerScore.ToString();
         }
 
         private void startNewGame()
@@ -135,8 +129,8 @@ namespace Ex05.GameUI
                 for (int j = 0; j < i_BoardSize; j++)
                 {
                     m_GameBoardButtons[i, j] = new GameButton(i, j);
-                    m_GameBoardButtons[i, j].Location = new Point(j * k_ButtonWidth + (j + 1) * k_SpaceBetweenButtons, i * k_ButtonHight + (i + 1) * k_SpaceBetweenButtons);
-                    m_GameBoardButtons[i, j].Size = new Size(k_ButtonWidth, k_ButtonHight);
+                    m_GameBoardButtons[i, j].Location = new Point((j * k_ButtonWidth) + ((j + 1) * k_SpaceBetweenButtons), (i * k_ButtonHeight) + ((i + 1) * k_SpaceBetweenButtons));
+                    m_GameBoardButtons[i, j].Size = new Size(k_ButtonWidth, k_ButtonHeight);
                     m_GameBoardButtons[i, j].TextAlign = ContentAlignment.MiddleCenter;
                     m_GameBoardButtons[i, j].Click += new EventHandler(buttonClicked);
                     this.Controls.Add(m_GameBoardButtons[i, j]);
@@ -159,17 +153,14 @@ namespace Ex05.GameUI
 
         private void InitializeLabels(int i_BoardSize, string i_NameOfPlayer1, string i_NameOfPlayer2)
         {
-            int labelHight = i_BoardSize * k_ButtonHight + i_BoardSize * k_SpaceBetweenButtons;
-            int width = (int)((this.Width / 2) - (2 * k_ButtonWidth));
+            int labelHight = (i_BoardSize * k_ButtonHeight) + (i_BoardSize * k_SpaceBetweenButtons);
+            int width = (int)(((i_BoardSize / 2) - 1.5) * k_ButtonWidth);
 
-            m_LabelPlayer1Name = new Label { Text = i_NameOfPlayer1, Location = new Point(width, labelHight), AutoSize = true };
-            m_LabelPlayer1Score = new Label { Text = k_StartingScore, Location = new Point(m_LabelPlayer1Name.Width +5, labelHight), AutoSize = true, BackColor = Color.Red};
-            m_LabelPlayer1Name.Font = new Font(m_LabelPlayer1Name.Font, FontStyle.Bold);
-            m_LabelPlayer1Score.Font = new Font(m_LabelPlayer1Score.Font, FontStyle.Bold);
-            m_LabelPlayer2Name = new Label { Text = i_NameOfPlayer2, Location = new Point((int)(this.Width / 2), labelHight), AutoSize = true };
-            m_LabelPlayer2Score = new Label { Text = k_StartingScore, Location = new Point(m_LabelPlayer2Name.Width + m_LabelPlayer2Name.Text.Length *10, labelHight), AutoSize = true, BackColor = Color.Green};
+            m_LabelPlayer1 = new Label { Text = i_NameOfPlayer1 + ": 0", Location = new Point(width, labelHight), AutoSize = true };
+            m_LabelPlayer1.Font = new Font(m_LabelPlayer1.Font, FontStyle.Bold);
+            m_LabelPlayer2 = new Label { Text = i_NameOfPlayer2 + ": 0", Location = new Point((int)((i_BoardSize / 2) * k_ButtonWidth) + 10, labelHight), AutoSize = true };
 
-            this.Controls.AddRange(new Control[] { m_LabelPlayer1Name, m_LabelPlayer1Score, m_LabelPlayer2Name, m_LabelPlayer2Score });
+            this.Controls.AddRange(new Control[] { m_LabelPlayer1, m_LabelPlayer2 });
         }
     }
 }

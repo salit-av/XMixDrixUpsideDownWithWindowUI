@@ -1,7 +1,6 @@
-﻿
-namespace Ex05.GameUI
+﻿namespace Ex05.GameUI
 {
-    partial class XMixDrixUpsideDownForm
+    public partial class XMixDrixUpsideDownForm
     {
         /// <summary>
         /// Required designer variable.
@@ -18,6 +17,7 @@ namespace Ex05.GameUI
             {
                 components.Dispose();
             }
+
             base.Dispose(disposing);
         }
 

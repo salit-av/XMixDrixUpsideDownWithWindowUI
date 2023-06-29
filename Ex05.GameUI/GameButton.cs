@@ -1,6 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
-using Ex05.GameLogic;
+﻿using System.Windows.Forms;
 
 namespace Ex05.GameUI
 {
@@ -8,6 +6,7 @@ namespace Ex05.GameUI
     {
         private int m_Row;
         private int m_Col;
+
         public GameButton(int i_Row, int i_Col)
         {
             this.m_Row = i_Row;
@@ -21,6 +20,7 @@ namespace Ex05.GameUI
                 return m_Row;
             }
         }
+
         internal int Col
         {
             get

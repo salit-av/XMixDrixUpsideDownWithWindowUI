@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Ex05.GameLogic
+﻿namespace Ex05.GameLogic
 {
     public class Game
     {
@@ -39,6 +34,7 @@ namespace Ex05.GameLogic
         private Player m_FirstPlayer;
         private Player m_SecondPlayer;
         private Board m_Board;
+
         public Game(eGameType i_GameType, int i_BoardSize, string i_NameOfPlayer1, string i_NameOfPlayer2)
         {
             r_GameType = i_GameType;
@@ -85,8 +81,12 @@ namespace Ex05.GameLogic
 
         private void checkGameStatus(int row, int col)
         {
-            checkIfTie();
             checkIfLose(row, col);
+
+            if (!m_IsPlayerLosed)
+            {
+                checkIfTie();
+            }
         }
 
         private void checkIfTie()
@@ -99,6 +99,7 @@ namespace Ex05.GameLogic
                 OnGameTie?.Invoke(m_FirstPlayer.Score, m_SecondPlayer.Score);
             }
         }
+
         private void checkIfLose(int i_Row, int i_Column)
         {
             if (m_Board.IsGameFinishedWithLost(getCurrentPlayerSign(), i_Row, i_Column))
@@ -152,6 +153,17 @@ namespace Ex05.GameLogic
                 m_FirstPlayer.Score++;
             }
         }
+
+        public string GetFirstPlayerName()
+        {
+            return m_FirstPlayer.Name;
+        }
+
+        public string GetSecondPlayerName()
+        {
+            return m_SecondPlayer.Name;
+        }
+
         public bool isWinOrTie()
         {
             return m_IsPlayerLosed && m_IsTie;
@@ -160,7 +172,6 @@ namespace Ex05.GameLogic
         public void StartNewGame()
         {
             m_Board.ClearBoard();
-            m_IsFirstPlayerMove = true;
             m_IsPlayerLosed = false;
             m_IsTie = false;
         }

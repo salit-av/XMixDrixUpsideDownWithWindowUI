@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Ex05.GameLogic
 {
@@ -51,6 +48,7 @@ namespace Ex05.GameLogic
                 return m_NameOfPlayer;
             }
         }
+
         internal void SmarterComputerMove(ref Board io_Board, ref int io_Row, ref int io_Column)
         {
             int i = 0;
@@ -70,11 +68,13 @@ namespace Ex05.GameLogic
         {
             Random random = new Random();
             GetRowAndCol(random, i_Board.BoardSize, out o_Row, out o_Column);
+
             while (!i_Board.IsThisCellClear(o_Row, o_Column))
             {
                 GetRowAndCol(random, i_Board.BoardSize, out o_Row, out o_Column);
             }
         }
+
         private void GetRowAndCol(Random i_Random, int i_BoardSize, out int o_Row, out int o_Column)
         {
             o_Row = i_Random.Next(0, i_BoardSize);

@@ -1,7 +1,6 @@
-﻿
-namespace Ex05.GameUI
+﻿namespace Ex05.GameUI
 {
-    partial class GameSettings
+    public partial class GameSettings
     {
         /// <summary>
         /// Required designer variable.
@@ -18,6 +17,7 @@ namespace Ex05.GameUI
             {
                 components.Dispose();
             }
+
             base.Dispose(disposing);
         }
 
@@ -207,7 +207,6 @@ namespace Ex05.GameUI
             this.Padding = new System.Windows.Forms.Padding(10, 10, 15, 15);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "GameSettings";
-            this.Load += new System.EventHandler(this.GameSettings_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRows)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCols)).EndInit();
             this.ResumeLayout(false);
